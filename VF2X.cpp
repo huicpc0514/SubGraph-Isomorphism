@@ -78,9 +78,11 @@ vector<Graph> database,query;
 void readGraph(vector<Graph> &G,int total){
     Graph now_graph;
     now_graph.init();
-    int n,m;
+    int n,m; char str[110];
     while(1){
-        scanf("%d%d",&n,&m);
+        gets(str);
+        if(str[0]=='@'||strlen(str)==0) continue;
+        sscanf(str,"%d%d",&n,&m);
         if(n==0&&m==0) break;
         //printf("n=%d m=%d tot=%d\n",n,m,total);
         for(int i=0;i<n;i++) now_graph.addVertex(i);
@@ -117,7 +119,7 @@ struct State{
         M1.clear(); M2.clear();
     }
 
-    vector<pair<VIndex,VIndex>> candi_sort(vector<pair<VIndex,VIndex>> &P,const Graph &G1,const Graph &G2)const{
+    vector<pair<VIndex,VIndex>> candi_sort(const vector<pair<VIndex,VIndex>> &P,const Graph &G1,const Graph &G2)const{
         if(P.size()<=3) return P;
         vector<pair<int,int>> node;
         for(int i=0;i<P.size();i++){
@@ -178,7 +180,9 @@ struct State{
             for(auto v:G1.succ[max_vid1]){
                 if(core_1[v]!=NULL_EIndex){flag=1;break;}
             }
-            if(flag) P=genPairSucc(G1,G2,max_vid1);
+            if(flag){
+                P=candi_sort(genPairSucc(G1,G2,max_vid1),G1,G2);
+            }
             else{
                 for(auto vid2: out_2){
                     P.push_back(make_pair(max_vid1,vid2));
@@ -193,7 +197,9 @@ struct State{
             for(auto v:G1.pred[max_vid1]){
                 if(core_1[v]!=NULL_EIndex){flag=1;break;}
             }
-            if(flag) P=genPairPred(G1,G2,max_vid1);
+            if(flag){
+                P=candi_sort(genPairPred(G1,G2,max_vid1),G1,G2);
+            }
             else{
                 for(auto vid2: in_2){
                     P.push_back(make_pair(max_vid1,vid2));
@@ -389,7 +395,7 @@ bool subisomorphism(const Graph &G1,Graph &G2){
 }
 
 int main(){
-    freopen("in.txt","r",stdin);
+    freopen("in2.txt","r",stdin);
     //freopen("out.txt","w",stdout);
     readGraph(database,1);
     readGraph(query,100);

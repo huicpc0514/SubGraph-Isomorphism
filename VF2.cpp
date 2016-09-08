@@ -78,9 +78,11 @@ vector<Graph> database,query;
 void readGraph(vector<Graph> &G,int total){
     Graph now_graph;
     now_graph.init();
-    int n,m;
+    int n,m; char str[110];
     while(1){
-        scanf("%d%d",&n,&m);
+        gets(str);
+        if(str[0]=='@'||strlen(str)==0) continue;
+        sscanf(str,"%d%d",&n,&m);
         if(n==0&&m==0) break;
         //printf("n=%d m=%d tot=%d\n",n,m,total);
         for(int i=0;i<n;i++) now_graph.addVertex(i);
