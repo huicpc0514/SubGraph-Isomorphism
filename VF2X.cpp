@@ -316,9 +316,19 @@ struct State{
         }
         return ans;
     }
+    set<VIndex> genCsB(int cnt,const vector<VIndex> &core, //补集
+                       const set<VIndex> &in,const set<VIndex> &out)const{
+        set<VIndex> ans;
+        for(int vid=0;vid<cnt;vid++){//未匹配点且在in和out中不存在
+            if(core[vid]==NULL_VIndex){
+                ans.insert(vid);
+            }
+        }
+        return ans;
+    }
     bool checkNewRule(const Graph &G1,const Graph &G2,VIndex n,VIndex m)const{
         set<VIndex> _n1=genCsA(G1.vertex_cnt,core_1,in_1,out_1);
-        set<VIndex> _n2=genCsA(G2.vertex_cnt,core_2,in_2,out_2);
+        set<VIndex> _n2=genCsB(G2.vertex_cnt,core_2,in_2,out_2);
         int num1=set_inter_size(G1.pred[n],_n1);
         int num2=set_inter_size(G2.pred[m],_n2);
         if(isomorphism&&num1>num2) return false;
@@ -395,7 +405,7 @@ bool subisomorphism(const Graph &G1,Graph &G2){
 }
 
 int main(){
-    freopen("in2.txt","r",stdin);
+    freopen("in.txt","r",stdin);
     //freopen("out.txt","w",stdout);
     readGraph(database,1);
     readGraph(query,100);

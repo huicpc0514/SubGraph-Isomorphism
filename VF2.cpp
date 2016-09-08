@@ -207,6 +207,7 @@ struct State{
         return true;
     }
     bool checkSuccRule(const Graph &G1,const Graph &G2,VIndex n,VIndex m)const{
+        //printf("n=%d m=%d\n",n+1,m+1);
         for(int eid=G1.rev_head_edge[n];eid!=NULL_EIndex;eid=G1.edge[eid].pre){
             int vid=G1.edge[eid].u;
             VIndex map_vid=core_1[G1.edge[eid].u];
@@ -221,9 +222,9 @@ struct State{
             if(!flag) return false;
         }
 //        printf("n=%d m=%d\n",n+1,m+1);
-//        set<VIndex> new_succ;
-//        set_intersection(M2.begin(),M2.end(),G2.succ[m].begin(),G2.succ[m].end(),
-//                         inserter(new_succ,new_succ.begin()));
+        set<VIndex> new_succ;
+        set_intersection(M2.begin(),M2.end(),G2.succ[m].begin(),G2.succ[m].end(),
+                         inserter(new_succ,new_succ.begin()));
 //        printf("m=%d new succ1 ",m+1);
 //        for(auto v: new_succ){
 //            printf("%d ",v+1);
@@ -235,9 +236,9 @@ struct State{
 //        }
 
 
-//        set<VIndex> new_succ2;
-//        set_intersection(M1.begin(),M1.end(),G1.succ[n].begin(),G1.succ[n].end(),
-//                         inserter(new_succ2,new_succ2.begin()));
+        set<VIndex> new_succ2;
+        set_intersection(M1.begin(),M1.end(),G1.succ[n].begin(),G1.succ[n].end(),
+                         inserter(new_succ2,new_succ2.begin()));
 //        printf("n=%d new succ2 ",n+1);
 //        for(auto v: new_succ2){
 //            printf("%d ",v+1);
@@ -287,9 +288,19 @@ struct State{
         }
         return ans;
     }
+    set<VIndex> genCsB(int cnt,const vector<VIndex> &core, //补集
+                       const set<VIndex> &in,const set<VIndex> &out)const{
+        set<VIndex> ans;
+        for(int vid=0;vid<cnt;vid++){//未匹配点且在in和out中不存在
+            if(core[vid]==NULL_VIndex){
+                ans.insert(vid);
+            }
+        }
+        return ans;
+    }
     bool checkNewRule(const Graph &G1,const Graph &G2,VIndex n,VIndex m)const{
         set<VIndex> _n1=genCsA(G1.vertex_cnt,core_1,in_1,out_1);
-        set<VIndex> _n2=genCsA(G2.vertex_cnt,core_2,in_2,out_2);
+        set<VIndex> _n2=genCsB(G2.vertex_cnt,core_2,in_2,out_2);
 //        for(auto v: _n1){
 //            printf("%d ",v+1);
 //        }printf("\n");
@@ -302,12 +313,12 @@ struct State{
 //        }printf("\n");
         int num1=set_inter_size(G1.pred[n],_n1);
         int num2=set_inter_size(G2.pred[m],_n2);
-//        printf("num1=%d num2=%d\n",num1,num2);
+        //printf("num1=%d num2=%d\n",num1,num2);
 //        assert(1==0);
         if(isomorphism&&num1>num2) return false;
         num1=set_inter_size(G1.succ[n],_n1);
         num2=set_inter_size(G2.succ[m],_n2);
-//        printf("num1=%d num2=%d\n",num1,num2);
+        //printf("num1=%d num2=%d\n",num1,num2);
 //        for(auto x: _n2){
 //            printf("%d ",x);
 //        }printf("\n");
@@ -410,7 +421,7 @@ int main(){
         time(&start_time);
         subisomorphism(G1,database[0]);
         time(&end_time);
-        //printf("cost %.3lf seconds\n",end_time-start_time);
+        printf("cost  seconds\n");
     }
     return 0;
 }
